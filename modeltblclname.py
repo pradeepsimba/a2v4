@@ -211,10 +211,7 @@ l4list = [
 
 columns_to_remove_temp = [
     'l1_status',
-    'l2_status',
     'l4_status',
-    'l3_status',
-    'l1_l2_accuracy',
 ]  + l1list[7:] + l4list[7:]
 
 #################################### Indi outputDownload ############################################
