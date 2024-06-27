@@ -1,0 +1,135 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+{% block content %}
+{% load tags %}
+<div class="grid-margin">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <form class="row mb-2" action="{% url 'aht_report' %}" method="POST">
+                        <input type="text" name="key" id="key" value="GetItem" style="display: none;">
+                        {% csrf_token %}
+                        <div class="col-md-2 col-sm-12">
+                            <label for="date">From Date</label>
+                            <input type="date" name="fromdate" id="fromdate" class="form-control"
+                                required value="{{ fromdate }}">
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <label for="date">To Date</label>
+                            <input type="date" name="todate" id="todate" class="form-control"
+                                required value="{{ todate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <label for="">File Name</label>
+                            <select class="form-control select-form" name="filename" id="filename"
+                                style="border: 1px solid black;color: black;" required>
+                                <option value="">-- select --</option>
+                                <option value="All">All</option>
+                                {% for f in filenames %}
+                                <option value="{{ f.baseid_id__filename}}">{{ f.baseid_id__filename}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <label for="">Location</label>
+                            <select name="location" id="location" style="border: 1px solid black;color: black;"
+                                class="form-control select-form" required>
+                                <!-- <option value="">-- select --</option> -->
+                                <option value="All">All</option>
+                                {% for loc in locations %}
+                                <option value="{{ loc.location }}">{{ loc.location }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <label for="">Language</label>
+                            <select name="language" id="language" style="border: 1px solid black;color: black;"
+                                class="form-control select-form" required>                            
+                                <option value="All">ALL</option>
+                                {% for lang in langs %}
+                                <option value="{{ lang.language }}">{{ lang.language }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="row">
+                                <div class="col-md-2 col-sm-12">
+                                    <label for="">Scope</label>
+                                    <select class="form-control" name="scope" id="scope" style="border: 1px solid black;color: black;">
+                                        <option value="All">ALL</option>
+                                        <option value="DA1">DA1</option>
+                                        <option value="QA">QA</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="mt-4">
+                                        <button class="btn btn-sm btn-success">Get</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    {% if aht_report %}                                        
+                                        <button class="btn btn-sm mt-4" style="float: right;">
+                                            <i class="bi bi-download"></i>
+                                        </button>                                       
+                                    {% endif %} 
+                                </div>
+                            </div>
+                        </div>                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% if aht_report %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive" style="overflow-y: scroll;max-height: 65vh;">
+                {{ aht_report|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var filename = '{{ filename }}';
+    var slctlocation = '{{ location }}';
+    var language = '{{ language }}';
+    var scope = '{{ scope }}';
+    // console.log(filename, slctlocation, language)
+    if (filename) {
+        $('#key').val('Download');
+        var one = $('#key').val();
+        $('#filename').val(filename);
+    }
+    if (slctlocation) {
+        $('#location').val(slctlocation);
+    }
+    if (language) {
+        $('#language').val(language);
+    }
+    if (scope) {
+        $('#scope').val(scope);
+    }
+
+    function init() {
+        $('#key').val('GetItem');
+        $('#refresh').hide();
+    }
+    $("input").change(function(){
+        init();
+    });
+    $("select").change(function(){
+        init();
+    });
+</script>
+{% endblock content %}
