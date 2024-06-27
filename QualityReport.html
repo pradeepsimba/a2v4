@@ -1,0 +1,284 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+{% block content %}
+{% load tags %}
+<style>
+    /* Define the loading animation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Style for the loading spinner */
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+      display: none;
+    }
+
+    /* Style for the button */
+    #loadingBtn {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+<div id="loadingSpinner" class="spinner"></div>  
+<div class="grid-margin">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <form class="row mb-2" action="{% url 'qualityreport' %}" method="POST">
+                        <input type="text" name="key" id="key" value="GetItem" style="display: none;">
+                        {% csrf_token %}
+
+
+                        <div class="col-md-2 col-sm-12">
+                            <label for="fromdate">From Date</label>
+                           
+                                <input type="date" name="fromdate" id="fromdate" class="form-control"
+                                    placeholder="From Date" required>
+                           
+                        </div>
+
+                        <div class="col-md-2 col-sm-12">
+                            <label for="todate">To Date</label>
+
+                                <input type="date" name="todate" id="todate" class="form-control"
+                                    placeholder="From Date" required>
+                           
+                        </div>
+
+                        <div class="col-md-2 col-sm-12">
+                            <label for="">language</label>
+
+                            <select class="form-control select-form" name="language" id="language"
+                                style="border: 1px solid black;color: black;" required>
+                                <option value="">-- select --</option>
+                                <option value="ALL">ALL</option>
+                                {% for f in language %}
+                                <option value="{{ f}}">{{ f}}</option>
+                                {% endfor %}                                
+                            </select>
+                        </div>
+
+                        <div class="col-md-2 col-sm-12">
+                            <label for="">File Name</label>
+
+                            <select class="form-control select-form" name="filename" id="filename"
+                                style="border: 1px solid black;color: black;" required>
+                                <option value="">-- select --</option>
+                                <option value="ALL">ALL</option>
+                                {% for f in filenames %}
+                                <option value="{{ f.baseid_id__filename}}">{{ f.baseid_id__filename}}</option>
+                                {% endfor %}                                
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <label for="">Location</label>
+                            <select name="location" id="location" style="border: 1px solid black;color: black;"
+                                class="form-control select-form" required>
+                                <option value="">-- select --</option>
+                                <option value="ALL">ALL</option>
+                                {% for l in locations %}
+                                <option value="{{ l.location}}">{{ l.location}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>           
+                        
+                        <div class="col-md-2 col-sm-12">
+                            <label for="">Scope </label>
+                            <select name="scope" id="scope" style="border: 1px solid black;color: black;"
+                                class="form-control select-form" required>
+                                <option value="">-- select --</option>
+                                <option value="ALL">ALL</option>
+                                <option value="DA1">DA1</option>
+                                
+                            </select>
+                        </div>  
+                        
+                        <div class="col-md-2 col-sm-12">
+                            <label for="">form</label>
+                            <select name="options" id="options" style="border: 1px solid black;color: black;"
+                                class="form-control select-form" required>
+                                <option value="">-- select --</option>
+                                <option value="FIELD">FIELD WISE</option>
+                                <option value="USER">USER WISE</option>
+                            </select>
+                        </div>  
+
+
+                        <div class="col-md-2 col-sm-12">
+                            <div class="mt-4">
+                                <button class="btn btn-sm btn-success" id="storebtn">Get</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-md-2 col-sm-12">
+                        <div class="mt-4">
+                            <button  id="submitBtn" class="btn btn-info">Download as csv</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+  
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive" style="overflow-y: scroll;max-height: 65vh;">
+                {% if response_data_list %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>PRODUCTION</th>
+                            <th>Employee id</th>
+                            <th>Employee Name</th>
+                            <th>Location</th>
+                            <th>Audited count</th>
+                            <th>Total error count</th>
+                            <th>Field count</th>
+                            <!-- <th>Acdited count with accuracy</th> -->
+                            <th>Field wise accuracy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data_dict in response_data_list %}
+                            {% if data_dict %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    
+                                    <td>{{ data_dict.PRODUCTION }}</td>
+                                    <td>{{ data_dict.Employee_id }}</td>
+                                    <td>{{ data_dict.Employee_Name }}</td>
+                                    <td>{{ data_dict.Location }}</td>
+                                    <td>{{ data_dict.audit_count_ft }}</td>
+                                    <td>{{ data_dict.total_error_ft }}</td>
+                                    <td>{{ data_dict.field_count_ft }}</td>
+                                    <!-- <td>{{ data_dict.Audited_count_wise_accuracy }}</td> -->
+                                    <td>{{ data_dict.field_wise_accuracy_ft }}</td>
+    
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+                {% if data_list2 %}
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Questions</th>
+                                <th>Total Input count</th>
+                                <th>processed count</th>
+                                <!-- <th>Audited_count</th> -->
+                                <th>Total_error</th>
+                                <th>Accuracy % on total input</th>
+                                <th>Disagreement % on total input</th>
+                                <th>Accuracy % on processed count</th>
+                                <th>Disagreement % on processed count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data_dict in data_list2 %}
+                                {% if data_dict %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>    
+                                        <td>{{ data_dict.Questions }}</td>
+                                        <td>{{ data_dict.Total_Input_count }}</td>
+                                        <th>{{ data_dict.processed_count }}</th>
+                                        <!-- <td>{{ data_dict.Total_Input_count }}</td> -->
+                                        <td>{{ data_dict.Total_error }}</td>
+                                        <td>{{ data_dict.Accuracy__on_total_input }}</td>
+                                        <td>{{ data_dict.Disagreement__on_total_input }}</td>
+                                        <td>{{ data_dict.Accuracy__on_processed_count }}</td>
+                                        <td>{{ data_dict.Disagreement__on_processed_count }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+   
+</div>
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+<!-- Add this in the <head> section of your HTML -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    $("#storebtn").click(function () {
+        localStorage.setItem('from', $("#fromdate").val());
+        localStorage.setItem('to', $("#todate").val());
+        localStorage.setItem('language', $("#language").val());
+        localStorage.setItem('filename_q', $("#filename").val());
+        localStorage.setItem('location_q', $("#location").val());
+        localStorage.setItem('scope_q', $("#scope").val());
+        localStorage.setItem('options', $("#options").val());
+    })
+
+    $("#submitBtn").click(function () {
+        var spinner = document.getElementById('loadingSpinner');
+
+
+
+        // Show the loading spinner
+        spinner.style.display = 'block';
+        var formData = {
+            csrfmiddlewaretoken:'{{ csrf_token }}',
+            fromdate: localStorage.getItem('from'),
+            todate: localStorage.getItem('to'),
+            language: localStorage.getItem('language'),
+            filename: localStorage.getItem('filename_q'),
+            location: localStorage.getItem('location_q'),
+            scope: localStorage.getItem('scope_q'),
+            options: localStorage.getItem('options'),
+            key: "Download"
+        };
+
+        // Send AJAX request
+        $.ajax({
+            type: "POST",
+            url: "/api/v4/qualityreport/",
+            data: formData,
+            // dataType: 'json',
+            success: function (response) {
+                var csvData = encodeURIComponent(response);
+
+                var a = document.createElement('a');
+                a.href = 'data:attachment/csv,' + csvData;
+                a.target = '_blank';
+                a.download = 'quality_report.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                spinner.style.display = 'none';
+            },
+            error: function (error) {
+                spinner.style.display = 'none';
+                console.log(error);
+            }
+        });
+         
+    });
+   
+</script>
+
+{% endblock content %}
