@@ -1,0 +1,144 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+{% block content %}
+{% load tags %}
+<div class="grid-margin">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <form class="row mb-2" action="{% url 'batchwisetracking' %}" method="POST">
+                        <input type="text" name="key" id="key" value="GetItem" style="display: none;">
+                        {% csrf_token %}
+                        <div class="col-md-2 col-sm-12">
+                            <label for="date">From Date</label>
+                            <!-- <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">Date</span>
+                                </div> -->
+                            <input type="date" name="from_date" id="from_date" class="form-control" placeholder="From Date"
+                                required value="{{ from_date|date:'Y-m-d' }}">
+                            <!-- </div> -->
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <label for="date">To Date</label>
+                            <!-- <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">Date</span>
+                                </div> -->
+                            <input type="date" name="to_date" id="to_date" class="form-control" placeholder="From Date"
+                                required value="{{ to_date|date:'Y-m-d' }}">
+                            <!-- </div> -->
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <label for="">File Name</label>
+
+                            <select class="form-control select-form" name="filename" id="filename"
+                                style="border: 1px solid black;color: black;" required>
+                                <option value="">-- select --</option>
+                                <option value="All">All</option>
+                                {% for f in filenames %}
+                                <option value="{{ f.baseid_id__filename}}">{{ f.baseid_id__filename}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <label for="">Location</label>
+                            <select name="location" id="location" style="border: 1px solid black;color: black;"
+                                class="form-control select-form" required>
+                                <option value="">-- select --</option>
+                                <option value="All">All</option>
+                                {% for l in locations %}
+                                <option value="{{ l.location}}">{{ l.location}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <div class="mt-4">                                
+                                <button id="refresh" class="btn btn-sm btn-primary"> <i class="bi bi-arrow-clockwise"></i></button>
+                                <button id="get" class="btn btn-sm btn-success">Get</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% if trackdata %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Date</th>
+                            <th>File Name</th>
+                            <th>Batch Name</th>
+                            <th>Location</th> <!-- v.baseid_id__created_by_id__location -->
+                            <th>Input Count</th>
+                            <th>DA1 Count</th>
+                            <th>QA Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in trackdata %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{v.baseid_id__created_at__date}}</td>
+                            <td>{{v.baseid_id__filename}}</td>
+                            <td>{{v.baseid_id__batch_name}}</td>
+                            <td>{{ location }}</td>
+                            <td>{{v.inputcount}}</td>
+                            <td>{{v.da1_count}}</td>
+                            <td>{{v.qa_count}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+<script>
+    var filename = '{{ filename }}';
+    var slctlocation = '{{ location }}';
+    // console.log(filename,slctlocation)
+    if (filename) {
+        // $('#key').val('Download');
+        // var one = $('#key').val();
+        $('#filename').val(filename);
+    }
+    if (slctlocation) {
+        $('#location').val(slctlocation);        
+    }
+    
+    var datas = '{{ trackdata }}';
+    function init() {
+        $('#get').show();
+        $('#refresh').hide();
+    }
+    
+    if (datas) {
+        $('#get').hide();
+        $('#refresh').show();
+    } else {
+        init();
+    }
+    $("input").change(function(){
+        init();
+    });
+    $("select").change(function(){
+        init();
+    });
+</script>
+{% endblock content %}
