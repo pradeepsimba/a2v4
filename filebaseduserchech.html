@@ -1,0 +1,351 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+<!-- Include any additional stylesheets if needed -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+{% load tags %}
+<div class="grid-margin">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <!-- Search Form -->
+                    <form class="row mb-2" action="{% url 'resetuser' %}" method="POST">
+                        <input type="text" name="key" id="key" value="GetItem" style="display: none;">
+                        {% csrf_token %}
+
+                        <div class="col-md-3 col-sm-12">
+                            <label for="batch_name">Filename</label>
+                            <select class="form-control select-form" name="batch_name" id="batch_name"
+                                style="border: 1px solid black; color: black;" required>
+                                <option value="">--Select--</option>
+                                {% for file in filenames %}
+                                <option value="{{file.baseid_id}}">{{file.baseid__filename}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <label for="location">Enter ID Value</label>
+                            <input type="text" class="form-control" name="id_value" id="id_value" required>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-info mt-4">Get</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% if targetusers %}
+            <hr>
+            <!-- Form for table data -->
+            <form id="myForm" method="POST">
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="thead thead-light">
+                            <tr>
+                                <th>S.No</th>
+                                <th>Batch Name</th>
+                                <th>ID Value</th>
+                                <th>Asin</th>
+                                <th>DA1</th>
+                                <th>QA</th>
+
+                            </tr>
+                        </thead>
+                        <tbody class="tbody">
+                            {% for v in targetusers %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ v.baseid__batch_name}}</td>
+                                <td>{{ v.id_value }}</td>
+                                <td>{{ v.asin }}</td>
+                                <td>{{ v.l1_emp__employeeID }}
+                                    <br><br>
+                                    Status : {{v.l1_status}}
+                                </td>
+
+                                <td>{{ v.l4_emp__employeeID }}
+                                    <br><br>
+                                    Status : {{v.l4_status}}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <!-- Search Form -->
+                    <form class="row mb-2" action="{% url 'resetuser' %}" method="POST">
+                        <input type="text" name="key" id="key" value="userassign" style="display: none;">
+                        {% csrf_token %}
+
+                        <div class="col-md-2 col-sm-12">
+                            <label for="batch_name">Filename</label>
+                            <select class="form-control select-form" name="batch_name1" id="batch_name1"
+                                style="border: 1px solid black; color: black;" required>
+                                <option value="">--Select--</option>
+                                {% for file in filenames %}
+                                <option value="{{file.baseid_id}}">{{file.baseid__filename}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-2 col-sm-12">
+                            <label for="scope">Scope</label>
+                            <select class="form-control select-form" name="scope1" id="scope1"
+                                style="border: 1px solid black; color: black;" required>
+                                <option value="">--Select--</option>
+                                <option value="DA1">DA1</option>
+
+                                <option value="QA">QA</option>
+
+                            </select>
+                        </div>
+
+                        <!-- <div class="col-md-2 col-sm-12">
+                            <label for="scope">Production Status</label>
+                            <select name="production_staus" id="production_staus" class="form-control"
+                                style="border: 1px solid black; color: black;">
+                                <option value="">--Select--</option>
+                                <option value="picked">Picked</option>                               
+                            </select>
+                        </div> -->
+                        <div class="col-md-2 col-sm-12">
+                            <label for="hold_unhold">Select Options</label>
+                            <select name="hold_unhold" id="hold_unhold" class="form-control"
+                                style="border: 1px solid black; color: black;" onchange="btnmanage()">
+                                <option value="">--Select--</option>
+                                <option value="All">All</option>
+                                <option value="picked">Picked</option>
+                                <option value="hold">Hold</option>
+                                <option value="processing">In Production</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-info mt-4">Get</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% if asignuser %}
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-hover" id="myTable">
+                    <thead class="thead thead-light">
+                        <tr>
+                            <th>S.No</th>
+                            <!-- <th>Batch ID</th> -->
+                            <th>ID Value</th>
+                            <th>DA1</th>
+                            <th>QA</th>
+                            <th>Status</th>
+                            <th>
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                                    style="margin-top: -2vh;">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody">
+                        {% for f in asignuser %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <!-- <td>{{ f.baseid__batch_name}}</td> -->
+                            <td>{{ f.id_value }}</td>
+                            <td>{{ f.l1_emp__employeeID }}
+                                <br><br>
+                                Status : {{f.l1_status}}
+                            </td>
+
+                            <td>{{ f.l4_emp__employeeID }}
+                                <br><br>
+                                Status : {{f.l4_status}}
+                            </td>
+                            <td>{{ f.status }}</td>
+                            <td><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+
+                </div>
+                <div class="col-md-1" id="btnreset">
+                    <button class="btn btn-sm btn-warning mt-4" id="reset" onclick="reset('reset')">Reset</button>
+                </div>
+                <div class="col-md-1" id="btnhold">
+                    <button class="btn btn-sm btn-info mt-4" id="hold" onclick="reset('hold')">UnHold</button>
+                </div>
+                <div class="col-md-2" id="btnassign">
+                    <button type="button" class="btn btn-sm btn-info mt-4" data-toggle="modal"
+                        data-target="#exampleModalLong3">Assign
+                        User</button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalLong3" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-xl" id="txtwrap" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="">Assigning Emplyee ID</label>
+                                    <select name="assigemployee" id="assigemployee" class="form-control"
+                                        style="border: 1px solid black; color: black;">
+                                        <option value="">--Select--</option>
+                                        {% for assig_id in assignuser_id %}
+                                        <option value="{{assig_id.userprofile_id}}">{{assig_id.userprofile__employeeID}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success" data-dismiss="modal" id="assignuser"
+                                        onclick="reset('assignuser')">Save</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var batchNameValue = '{{ batch_name }}';
+        $('#batch_name').val(batchNameValue);
+        var batchNameValue = '{{ batch_name1 }}';
+        $('#batch_name1').val(batchNameValue);
+        var scopeValue = '{{ scope }}';
+        $('#scope1').val(scopeValue);
+        var scopeValue = '{{ status_data }}';
+        $('#hold_unhold').val(scopeValue);
+        btnmanage();
+    });
+
+    function btnmanage() {
+        var selectval = $('#hold_unhold').val();
+        if (selectval == 'hold') {
+            $('#btnhold').show();
+            $('#btnreset').hide();
+            $('#btnassign').hide();
+        } else if (selectval == 'picked') {
+            $('#btnreset').show();
+            $('#btnhold').hide();
+            $('#btnassign').hide();
+        } else if (selectval == 'processing') {
+            $('#btnassign').show();
+            $('#btnreset').hide();
+            $('#btnhold').hide();
+        }
+    }
+
+</script>
+<!-- {% csrf_token %} -->
+<script>
+
+    function reset(key) {
+        var assigningemployee_id = $('#assigemployee').val();
+        var assigningemployeename = $('#assigemployee option:selected').text();
+        var assigning_for = $('#scope1').val();
+        var filename = $('#batch_name1').val();
+
+        // var production_staus = $('#production_staus').val();  
+        // Create an array to store checked items
+        var checkedItems = [];
+
+        // Iterate over checked checkboxes and collect their values
+        $('#myTable tbody input:checked').each(function () {
+            checkedItems.push($(this).closest('tr').find('td:eq(1)').text());
+        });
+        console.log(checkedItems)
+        // Get the CSRF token
+        var csrfToken = '{{ csrf_token }}' //$('[name=csrfmiddlewaretoken]').val();
+
+        // Prepare form data
+        var formdata = {
+            keyval: key,
+            idval: checkedItems,
+            filename:filename,
+
+            assigningemployee_id: assigningemployee_id,
+            assigning_for: assigning_for,
+            // production_staus : production_staus,
+            csrfmiddlewaretoken: csrfToken,  // Include the CSRF token
+        };
+
+        // Send Ajax request
+        $.ajax({
+            type: 'POST',
+            url: '/api/v4/resetuser/',
+            data: formdata,
+            dataType: 'json',
+            success: function (response) {
+                if (key == 'assignuser') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ASSIGNED to : ' + assigningemployeename + ' Successfully',
+                        type: 'success',
+                        confirmButtonText: 'Okay'
+                    }).then(function () {
+                        location.reload();
+                    });
+                } else if (key == 'hold') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Moved to Production Successfully',
+                        type: 'success',
+                        confirmButtonText: 'Okay'
+                    }).then(function () {
+                        location.reload();
+                    });
+                } else if (key == 'reset') {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ID Reset Successfully',
+                        type: 'success',
+                        confirmButtonText: 'Okay'
+                    }).then(function () {
+                        location.reload();
+                    });
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+</script>
+<!-- <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> -->
+
+
+
+
+{% endblock content %}
