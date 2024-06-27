@@ -1,0 +1,363 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+<!-- Include any additional stylesheets if needed -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+{% load tags %}
+<div class="grid-margin">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <!-- Search Form -->
+                    <form class="row mb-2" action="{% url 'target' %}" method="POST">
+                        <input type="text" name="key" id="key" value="GetItem" style="display: none;">
+                        {% csrf_token %}
+                    
+                        <div class="col-md-2 col-sm-12">
+                            <label for="scope">Scope</label>
+                            <select class="form-control select-form" name="scope" id="scope" style="border: 1px solid black; color: black;" onchange="makefunc(this)">
+                                <option value="">-- Select --</option>
+                                <option value="All">All</option>
+                                <option value="DA1">DA1</option>
+
+                                <option value="QA">QA</option>
+                            </select>
+                        </div>
+                    
+                        <div class="col-md-2 col-sm-12" id="trgtdiv">
+                            <label for="targetfor">QA For</label>
+                            <select class="form-control select-form" name="targetfor" id="targetfor" style="border: 1px solid black; color: black;" onchange="forfunc(this)">
+                                <option value="">-- Select --</option>
+                                <option value="Queue">QA Queue</option>
+                                <option value="Target">Target</option>
+                            </select>
+                        </div>
+                    
+                        <div class="col-md-2 col-sm-12" id="batchdiv">
+                            <label for="batch">Filename</label>
+                            <select name="batch" id="batch" style="border: 1px solid black; color: black;" class="form-control select-form">
+                                <option value="">-- Select --</option>
+                                {% for file in filenames %}
+                                    <option value="{{file.baseid_id }}">{{file.filename}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    
+                        <div class="col-md-2 col-sm-12" id="datediv">
+                            <label for="targetfor">Date</label>
+                            <input type="date" class="form-control" name="date" id="date" value="{{ selected_date }}">
+                        </div>
+                    
+                        <div class="col-md-2 col-sm-12" id="queuediv">
+                            <label for="targetfor">QA Queue %</label>
+                            <input type="number" min="1" max="100" class="form-control" name="queuev" id="queuev" value="">
+                        </div>
+                    
+                        <div class="col-md-3 col-sm-12" id="locdiv">
+                            <label for="location">Location</label>
+                            <select name="location"  style="border: 1px solid black; color: black;" class="form-control select-form" id="locationfortarget">
+                                <option value="">-- Select --</option>
+                                {% for loc in locations %}
+                                    <option value="{{ loc.location }}" {% if loc.location in selected_location %}selected{% endif %}>{{ loc.location }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-2 col-sm-12">
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-success" id="togglebtn">Get</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% if qa_queue_view %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive" style="overflow-y: scroll;max-height: 55vh;">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>S.No</th>
+                            <th>QA Queue Tartget Date</th>
+                            <th>Batch</th>
+                            <th>Filename</th>
+                            <th>QA Queue Percentage</th>
+                            <th>Created By</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in qa_queue_view %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ d.queue_date }}</td>
+                            <td>{{ d.queue_batch__batch_name }}</td>
+                            <td>{{ d.queue_batch__filename }}</td>
+                            <td>{{ d.queue_percentage }}</td>
+                            <td>{{ d.created_by__employeeID }}</td>
+                            <td>{{ d.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if datais %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-5"></div>
+                <div class="col-md-2">
+                   <label for="">Set Overall Target</label>
+                </div>
+          
+                <div class="col-md-2">
+                    <input type="number" class="form-control" min="0" max="100" name="targetvalue" id="targetvalue">
+                </div>
+                <div class="col-md-2">
+                    <input type="button" class="btn btn-info" onclick="assignval()" name="getval"
+                        id="getval" value="Set">
+                </div>
+            </div>
+
+            <!-- Form for table data -->
+            <form id="myForm" method="POST">
+                {% csrf_token %}
+
+                <div class="table-responsive" style="overflow-y: scroll;max-height: 55vh;">
+                    <table class="table table-hover" id = "myTable">
+                        <thead class="thead thead-light">
+                            <tr>
+                                <th>S.No</th>
+                                <th>Employee Name</th>
+                                <th>Scope</th>
+                                <th>Location</th>
+                                <th>Target</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for v in targetusers %}
+                            
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td style="display: none;">{{ v.empid}}</td>
+                                <td>{{ v.userprofile_id__employeeName }}</td>
+                                <td>{{ v.role }}</td>
+                                <td>{{ v.userprofile_id__location }}</td>
+                                <td>
+                                    <input type="number" class="form-control" name="percentageval"
+                                        value="{{ v.target }}" min="0" max="100" class="percentageval">
+                                </td>
+                            </tr>
+                            
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Submit button -->
+                <div class="row">
+                    <div class="col-md-10"></div>
+                    <div class="col-md-2 mb-2">
+                        <button type="button" class="btn btn-primary btn-sm"
+                            id="saveDataBtn">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- Script for assigning values -->
+<script>
+    function hidefunc() {
+        $('#trgtdiv').hide();
+        $('#locdiv').hide();
+        $('#queuediv').hide();
+        $('#datediv').hide();
+        $('#batchdiv').hide();
+    }
+    hidefunc()
+    function makefunc(val) {
+        hidefunc();
+        var valf = $(val).val()
+        if (valf == 'QA') {
+            $('#trgtdiv').show();
+        } else {
+            $('#togglebtn').text("Get");
+            $('#locdiv').show();
+            $('#datediv').show();
+        }
+    }
+    function forfunc(val) {
+        makefunc();
+        var valf = $(val).val()
+        if (valf == 'Queue') {
+            $('#date').val('');
+            $('#togglebtn').text("Set Queue");
+            $('#trgtdiv').show();
+            $('#batchdiv').show();
+            $('#datediv').show();
+            $('#queuediv').show();
+            $('#locdiv').hide();
+        } else {
+            $('#togglebtn').text("Get");
+            $('#trgtdiv').show();
+            $('#locdiv').show();
+            $('#datediv').show();
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        // Initial check on page load
+        var scopev = '{{ selected_scope }}';
+        var targetforv = '{{ selected_targetfor }}';
+        if (targetforv) {
+            $('#targetfor').val('{{ selected_targetfor }}').change();
+        }
+        if (scopev) {
+            $('#scope').val('{{ selected_scope }}').change();
+        }
+        var scopeValue = $("#scope").val();
+        
+        if (scopeValue == ""){
+            $('#locdiv').hide();
+        }
+        else if (scopeValue == 'QA') {
+            $('#trgtdiv').show();
+            $('#locdiv').show();
+            $('#datediv').show();
+        }
+        else {
+            $('#locdiv').show();
+            $('#datediv').show();
+        }
+       
+    });
+</script>
+<script>
+     $("#date").on("input", function() {
+        // console.log("Input content changed: " + $(this).val() , $('#batch option:selected').val());
+        if ($('#batch option:selected').val() != '') {
+            var formData = {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                'targetfor':$('#targetfor').val(),
+                'batch':$('#batch option:selected').val(),
+                'date':$(this).val(),
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/api/v4/target/",
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    var value = response['fordate'];
+                    // console.log(value,"=======")
+                    $('#queuev').val(value)
+                },
+                error: function (error) {
+                    console.log(error,"errrrrrrrrrrrr");
+                }
+            });
+        }
+    });
+</script>
+<script>
+    // function assignval() {
+    //     var recordCount = $("#myTable tbody tr").length;
+    //     var inputValue = $("#targetvalue").val();
+
+    //     if (parseFloat(inputValue) !== 0) {
+    //         var quotient = parseInt(inputValue) / parseInt(recordCount);
+    //         var remainder = parseInt(inputValue) % parseInt(recordCount);
+    //         console.log('Quotient:', quotient);
+    //         console.log('Remainder:', remainder);
+
+    //         // Reset all percentage values to quotient
+    //         $("input[name='percentageval']").val(parseInt(quotient));
+
+    //         // Distribute the remainder among the last rows
+    //         var lastRows = $("#myTable tbody tr").slice(-remainder);
+    //         lastRows.each(function () {
+    //             var currentPercentage = parseInt($(this).find(".percentageval").val());
+    //             $(this).find(".percentageval").val(currentPercentage + 1);
+    //         });
+    //     } else {
+    //         alert("Input value should be greater than zero.");
+    //     }
+    // }
+    function assignval() {
+        var recordCount = $("#myTable tbody tr").length;
+        var inputValue = $("#targetvalue").val();
+        $("input[name='percentageval']").val(inputValue);        
+    }
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#saveDataBtn").on("click", function () {
+            var tableData = [];
+            $("#myTable tbody tr").each(function () {
+                var rowData = {
+                    employeeID: $(this).find("td:nth-child(2)").text(),
+                    role: $(this).find("td:nth-child(4)").text(),
+                    percentageval: $(this).find("input[name='percentageval']").val()
+                };
+
+                tableData.push(rowData);
+            });
+
+            // Get CSRF token from the template context
+            var csrfToken = '{{ csrf_token }}';
+
+            var formData = {
+                csrfmiddlewaretoken: csrfToken,
+                tableData: JSON.stringify(tableData),
+                target_date: $('#date').val(),
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/api/v4/save_table_data/",
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    // alert(response.message);
+                    location.href='/api/v4/target/';
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Include jQuery if not already included -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Include any additional scripts if needed -->
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+
+
+<!-- Include jQuery if not already included -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Include any additional scripts if needed -->
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+{% endblock content %}
