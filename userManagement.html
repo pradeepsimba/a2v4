@@ -1,0 +1,219 @@
+<!-- {% extends "layouts/base.html" %} -->
+{% load static %}
+{% block title %} {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+{% block content %}
+{% load tags %}
+<div class="grid-margin">
+    <div class="card shadow">
+        <form id="UserRole" method="POST">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Employee ID</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <input readonly class="form-control" name="employeeid" id="employeeid"
+                                    value="{{ userdatas.employeeID }}">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Employee Name</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <input class="form-control" name="employeeName" id="employeeName"
+                                    {% if userdatas.employeeName != "" and userdatas.employeeName is not None %}
+                                        readonly value="{{ userdatas.employeeName }}"
+                                    {% else %}
+                                        value = "" required
+                                    {% endif %} 
+                                >
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Location</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <select name="location" id="location" class="form-control">
+                                    <option value="">--select--</option>
+                                    {% for loc in location %}
+                                    <option value="{{ loc.location }}" {% if loc.location == userdatas.location %} selected{% endif %}>{{ loc.location }}</option>
+                                    {% endfor %}
+                                  </select>                                
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Reporting Person</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <input class="form-control" name="reporting" id="reporting"
+                                    {% if userdatas.reporting != "" and userdatas.reporting is not None %}
+                                        readonly value="{{ userdatas.reporting }}"
+                                    {% else %}
+                                        value = "" required
+                                    {% endif %} 
+                                >
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Production Date</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <input class="form-control" name="prodStart_date" id="prodStart_date" type="date"
+                                    {% if userdatas.prodStart_date %} readonly {% endif %}
+                                    value="{{ userdatas.prodStart_date|date:'Y-m-d' }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Role</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <select class="form-control" name="role" id="role" multiple>
+                                    <option value="DA1" {% if 'DA1' in roles %} selected{% endif %}>DA1</option>
+                                    <option value="QA" {% if 'QA' in roles %} selected{% endif %}>QA</option>
+                                    <option value="Admin" {% if 'Admin' in roles %} selected{% endif %}>Admin</option>
+                                    {% if 'Super Admin' in request.session.permlist %}
+                                    <option value="Super Admin" {% if 'Super Admin' in roles %} selected{% endif %}>
+                                        Super Admin</option>
+                                    {% endif %}
+                                </select>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Language</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <select type="language" name="language" class="form-control" multiple>
+                                    <option value="">--select--</option>
+                                    {% for l in langs %}
+                                    <option value="{{ l.language }}"  {% if l.language in userdatas.language %} selected{% endif %}>{{ l.language }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="float-right">
+                    <button class="btn btn-success" id="RoleSubmit">Submit</button>
+                </div>
+            </div>
+        </form>
+        <hr class="border border-gray border-3 opacity-50">
+        <div class="card-body">
+            <form action="{% url 'UserManagement' %}" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <input type="text" name="userprofile" style="display: none;" value="{{ userdatas.id }}">
+                    <input type="text" name="key" style="display: none;" value="ShiftTime">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Shift start Time</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <input class="form-control" type="datetime-local" name="shift_starttime"
+                                    id="shift_starttime" value="{{ shift.starttime|date:'Y-m-d\TH:i' }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4">
+                                <label class="label">Shift end Time</label>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <input class="form-control" type="datetime-local" name="shift_endtime"
+                                    id="shift_endtime" value="{{ shift.endtime|date:'Y-m-d\TH:i' }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="float-right">
+                    <button class="btn btn-success">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+<script>
+    // $('#shift_starttime').val(formattedDateTime);
+    // $('#shift_endtime').val(formattedDateTime);
+
+
+    $("#RoleSubmit").click(function () {
+        event.preventDefault();
+        var frm = $('#UserRole');
+
+        var url = '/api/v4/UserManagement/';
+
+        var formData = frm.serialize() + '&key=userdata'
+        $('.overlay').css('width', '100%');
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData
+        }).done(function (data) {
+            if (data['status'] == 200) {
+                location.reload()
+            }
+            else {
+                Swal.fire({
+                    title: 'Failes Try Again!',
+                    text: data['message'],
+                    type: 'error',
+                    confirmButtonText: 'Okay'
+                });
+            }
+        }).fail(function (error) {
+            $('.overlay').css('width', '0%');
+            Swal.fire({
+                title: 'Error!',
+                text: error,
+                type: 'error',
+                confirmButtonText: 'Okay'
+            });
+        });
+        // $("#submitButtonValue").val('submit_and_close');
+    });
+</script>
+{% endblock content %}
