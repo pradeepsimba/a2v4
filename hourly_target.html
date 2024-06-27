@@ -1,0 +1,113 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+<!-- Include any additional stylesheets if needed -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+{% load tags %}
+<div class="grid-margin">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <!-- Search Form -->
+                    <form class="row mb-2" action="{% url 'hourlytarget' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="text" name="key" id="key" value="GetItem" style="display: none;">
+                        <div class="col-md-3 col-sm-12">
+                                <label for="">Date</label>
+                            <input type="date" name="date" id="target_date" class="form-control" placeholder="From Date"
+                                required value="{{ date }}">
+                        </div>                        
+                        <div class="col-md-3 col-sm-12">
+                            <label for="scope">Scope</label>
+                            <select class="form-control select-form" name="scope" id="scope"
+                                style="border: 1px solid black; color: black;">
+                                <option value="All">All</option>
+                                <option value="DA1">DA1</option>
+
+                                <option value="QA">QA</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <label for="location">Location</label>
+                            <select name="location" id="location" style="border: 1px solid black; color: black;"
+                                class="form-control select-form" required>
+                                <option value="All">All</option>
+                                {% for loc in locations %}
+                                <option value="{{loc.location}}">{{loc.location}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-success">Get</button>
+                                {% if houretarget %}                                        
+                                    <button class="btn btn-sm" style="float: right;margin-top: 1vh;">
+                                        <i class="bi bi-download"></i>
+                                    </button>                                       
+                                {% endif %} 
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive" id="appenddf" style="overflow-y: scroll;max-height: 60vh;">
+                {{ houretarget|safe }}
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- Script for assigning values -->
+<script>
+    var key = '{{ key }}';
+    if (key == 'GetItem') {
+        $('#key').val('Download');
+    }
+    var slctlocation = '{{ location }}';
+    var scope = '{{ scope }}';
+    if (scope) {
+        $('#scope').val(scope);
+    }
+    if (slctlocation) {
+        $('#location').val(slctlocation);        
+    }
+
+    $("#dftable tbody tr").each(function () {
+        var target;
+        $(this).find("td:eq(5)").each(function () {
+            target = parseInt($(this).text());    
+        }); 
+        $(this).find("td:gt(5)").each(function () {
+            var hrprod = parseInt($(this).text());
+            if (!isNaN(hrprod) && hrprod >= target) {
+                $(this).css("background-color", "rgb(142, 247, 159)");
+            } else {
+                $(this).css("background-color", "rgb(248, 161, 161)");
+            }
+        });
+    });
+
+    function init() {
+        $('#key').val('GetItem');
+        // $('#refresh').hide();
+    }
+    $("input").change(function(){
+        init();
+    });
+    $("select").change(function(){
+        init();
+    });
+</script>
+<!-- Include jQuery if not already included -->
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+{% endblock content %}
