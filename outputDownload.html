@@ -1,0 +1,234 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+{% block content %}
+{% load tags %}
+<div class="grid-margin">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10 col-sm-12">
+                    <form class="row mb-2" action="{% url 'outputDownload' %}" method="POST">
+                        <input type="text" name="key" id="key" value="GetItem" style="display: none;">
+                        {% csrf_token %}
+                        <div class="col-md-3 col-sm-12">
+                            <label for="fromDate">From</label>
+                            <input type="datetime-local" name="fromDate" id="fromDate" class="form-control"
+                                placeholder="From Date" >
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <label for="toDate">To</label>
+                            <input type="datetime-local" name="toDate" id="toDate" class="form-control"
+                                placeholder="To Date" >
+                        </div>
+                        <div class="col-md-3 col-sm-12">
+                            <label for="filename">File Name</label>
+                            <select id="filename" name="filename" class="form-control select-form" style="color: black;"
+                                required>
+                                <option value="">--Select--</option>
+                                {% for i in filenames %}
+                                <option value="{{i.baseid_id__filename}}">{{i.baseid_id__filename}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <label for="language">Language</label>
+                            <select id="language" name="language" class="form-control select-form" style="color: black;"
+                                required>
+                                <option value="All">ALL</option>
+                                {% for lang in langs %}
+                                <option value="{{ lang.language }}">{{ lang.language }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-1 col-sm-12">
+                            <div class="mt-4">
+                                <button class="btn btn-sm btn-success" id="outdata">Get</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% if dL1raw or dL4raw %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row text-center p-3">
+                {% if dL1raw %}
+                <div class="col-sm-6 col-md-4">
+                    <form class=" mb-2" action="{% url 'outputDownload' %}" method="POST">
+                        <input type="text" name="key" id="key" value="Download" style="display: none;">
+                        <input type="text" name="reporttype" id="reporttype" value="DA1" style="display: none;">
+                        <input type="datetime-local" name="fromDate" id="fromDate" style="display: none;">
+                        <input type="datetime-local" name="toDate" id="toDate" style="display: none;">
+                        <input type="text" name="language" id="language" style="display: none;">
+                        <input type="text" name="filename" id="filename" style="display: none;">
+                        {% csrf_token %}
+                        <button class="btn btn-lg" style="background-color:mediumslateblue;color:white;">
+                            DA1 <i class="bi bi-download ml-1"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+                {% if dL4raw %}
+                <div class="col-sm-6 col-md-4">
+                    <form class=" mb-2" action="{% url 'outputDownload' %}" method="POST">
+                        <input type="text" name="key" id="key" value="Download" style="display: none;">
+                        <input type="text" name="reporttype" id="reporttype" value="QA" style="display: none;">
+                        <input type="datetime-local" name="fromDate" id="fromDate" style="display: none;">
+                        <input type="datetime-local" name="toDate" id="toDate" style="display: none;">
+                        <input type="text" name="language" id="language" style="display: none;">
+                        <input type="text" name="filename" id="filename" style="display: none;">
+                        {% csrf_token %}
+                        <button class="btn btn-lg" style="background-color:mediumslateblue;color:white;">
+
+                            QA <i class="bi bi-download ml-1"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            <hr>
+            <div class="row text-center p-3">
+                {% if dL1raw and dL4raw %}
+
+                <div class="col-sm-6 col-md-6">
+                    <form class=" mb-2" action="{% url 'ConsolidateOutput' %}" method="POST">
+                        <input type="datetime-local" name="fromDate" id="fromDate" style="display: none;">
+                        <input type="datetime-local" name="toDate" id="toDate" style="display: none;">
+                        <input type="text" name="language" id="language" style="display: none;">
+                        <input type="text" name="filename" id="filename" style="display: none;">
+                        {% csrf_token %}
+                        <button class="btn btn-lg rounded-right" style="background-color:rgb(61, 82, 179);color:white;">
+                            Overall With Agent Data <i class="bi bi-download ml-1"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if dL1raw and dL4raw %}
+
+                <div class="col-sm-6 col-md-6">
+                    <form class=" mb-2" action="{% url 'ConsolidateOutput' %}" method="POST">
+                        <input type="datetime-local" name="fromDate" id="fromDate" style="display: none;">
+                        <input type="datetime-local" name="toDate" id="toDate" style="display: none;">
+                        <input type="text" name="key" id="key" value="withoutdata" style="display: none;">
+                        <input type="text" name="language" id="language" style="display: none;">
+                        <input type="text" name="filename" id="filename" style="display: none;">
+                        {% csrf_token %}
+                        <button class="btn btn-lg rounded-left" style="background-color: rgb(61, 82, 179);color:white;">
+                            Overall Without Agent Data <i class="bi bi-download ml-1"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- <div class="card shadow">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10 col-sm-12">
+                    <form class="row mb-2" action="{% url 'outputDownload' %}" method="POST">
+                        <input type="text" name="key" id="key" value="withoutdata" style="display: none;">
+                        {% csrf_token %}
+                        <div class="col-md-2 col-sm-12">
+
+                            <select id="language" name="language" class="form-control select-form" style="color: black;"
+                                required>
+                                <option value="">--Select--</option>
+                                <option value="All">ALL</option>
+                                <option value="English">English</option>
+                                <option value="German">German</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="French">French</option>
+                            </select>
+
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <select id="filename" name="filename" class="form-control select-form" style="color: black;"
+                                required>
+                                <option value="">--Select--</option>
+                                {% for i in filenames %}
+                                <option value="{{i.baseid_id__filename}}">{{i.baseid_id__filename}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-sm-12">
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-success" id="outdata">Get</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {{ rawdata }}
+    {% if rawdata %}    
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row">
+
+                <div class="col-sm-6 col-md-3">
+                    <form class=" mb-2" action="{% url 'withoutdatadownload' %}" method="POST">
+                        <input type="text" name="key" id="key" value="Download" style="display: none;">                     
+                        <input type="text" name="language" id="language" value="{{ language }}" style="display: none;">
+                        <input type="text" name="filename" id="filename" value="{{ filename }}" style="display: none;">
+                        {% csrf_token %}
+                        <button class="btn btn-lg" style="background-color:mediumslateblue;color:white;">
+                            Without Data Download <i class="bi bi-download ml-1"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endif %} -->
+
+</div>
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+<script>
+    $('#outdata').click(function () {
+        fromDate = $('#fromDate').val();
+        sessionStorage.setItem('fromDate', fromDate);
+
+        toDate = $('#toDate').val();
+        sessionStorage.setItem('toDate', toDate);
+
+        filename = $('#filename').val();
+        sessionStorage.setItem('filename', filename);
+
+        language = $('#language').val();
+        sessionStorage.setItem('language', language);
+    });
+    $(document).ready(function () {
+        var language = sessionStorage.getItem('language');
+        $("#language").val(language);
+        $("input[name='language']").val(language);
+
+        var filename = sessionStorage.getItem('filename');
+        $("#filename").val(filename);
+        $("input[name='filename']").val(filename);
+
+        var fromDate = sessionStorage.getItem('fromDate');
+        $("input[name='fromDate']").val(fromDate);
+
+        var toDate = sessionStorage.getItem('toDate');
+        $("input[name='toDate']").val(toDate);
+    });
+</script>
+{% endblock content %}
