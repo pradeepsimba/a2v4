@@ -1,0 +1,182 @@
+<nav class="sidebar sidebar-offcanvas shadow navbar-nav-scroll scrollbar-winter-neva thin" id="sidebar">
+    <ul class="nav">
+        <!-- {% if 'Dashboard' in request.session.permlist or 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'dashboard' %}">
+                <i class="icon-arrow-right menu-icon"></i>
+                <span class="menu-title">Dashboard</span>
+            </a>
+        </li>
+        {% endif %} -->
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist  %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'project_management' %}">
+                <i class="bi bi-files-alt menu-icon"></i>
+                <span class="menu-title">Project Management</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'upload' %}">
+                <i class="icon-cloud-upload menu-icon"></i>
+                <span class="menu-title">Input Upload</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if 'DA1' in request.session.permlist or 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'productionl1' %}">
+                <i class="bi bi-person-workspace menu-icon"></i>
+                <span class="menu-title">DA1 Production</span>
+            </a>
+        </li>
+        {% endif %}
+
+
+
+        {% if 'QA' in request.session.permlist or 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'productionl4' %}">
+                <i class="bi bi-person-workspace menu-icon"></i>
+                <span class="menu-title">QA Production</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'outputDownload' %}">
+                <i class="icon-cloud-download menu-icon"></i>
+                <span class="menu-title">Output Download</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'userTable' %}">
+                <i class="bi bi-person-vcard menu-icon"></i>
+                <span class="menu-title">User Management</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'target' %}">
+                <i class="mdi mdi-basket-unfill menu-icon"></i>
+                <span class="menu-title">Target</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'batchwisetracking' %}">
+                <i class="mdi mdi-chart-pie menu-icon"></i>
+                <span class="menu-title">Batch wise Tracking</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'hourlytarget' %}">
+                <i class="bi bi-clock menu-icon"></i>
+                <span class="menu-title">Hourly Tracking</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'qualityreport' %}">
+                <i class="bi bi-clipboard2-check menu-icon"></i>
+                <span class="menu-title">Quality report</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'userwisetracking' %}">
+                <i class="bi bi-person-video2 menu-icon"></i>
+                <span class="menu-title">User wise Tracking</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'ut_report' %}">
+                <i class="bi bi-calendar3 menu-icon"></i>
+                <span class="menu-title">UT Report</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'aht_report' %}">
+                <i class="bi bi-clock-history menu-icon"></i>
+                <span class="menu-title">Overall AHT Report</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'ck_report' %}">
+                <i class="bi bi-columns-gap menu-icon"></i>
+                <span class="menu-title">CK Report</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist  %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'iaa' %}">
+                <i class="fas fa-chart-bar menu-icon"></i>
+                <span class="menu-title">IAA Report</span>
+            </a>
+        </li>
+        {% endif %}
+
+        {% if 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist  %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'resetuser' %}">
+                <i class="bi bi-signpost-2 menu-icon"></i>
+                <span class="menu-title">File Tracking</span>
+            </a>
+        </li>
+        {% endif %}
+        <li class="nav-item d-sm-block d-md-none">
+            <a class="nav-link" href="{% url 'logout' %}">
+                <i class="ti-power-off text-danger menu-icon"></i>
+                <span class="menu-title text-danger">Logout</span>
+            </a>
+        </li>
+        <!-- <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
+                <i class="icon-grid-2 menu-icon"></i>
+                <span class="menu-title">Tables</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="tables">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="pages/tables/basic-table.html">Basic table</a>
+                    </li>
+                </ul>
+            </div>
+        </li>         
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
+                <i class="icon-ban menu-icon"></i>
+                <span class="menu-title">Error pages</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="error">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
+                    <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
+                </ul>
+            </div>
+        </li>-->
+    </ul>
+</nav>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
