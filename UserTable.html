@@ -1,0 +1,193 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+{% block content %}
+{% load tags %}
+<div class="grid-margin-sm-0">
+    <!-- action="{% url 'OverAllRole' %}" method="POST" novalidate -->
+    <div class="card shadow-sm">
+        <form id="sampfrm">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <textarea class="form-control" name="employeeid" id="" cols="30" rows="4"
+                            placeholder="Enter Employee ID (EmpID1,EmpID2)" required></textarea>
+                        <input type="text" value="12344567" required style="display: none;">
+                    </div>
+                    <div class="col-sm-12 col-md-5">
+                        <div class="col-sm-12 col-md-8">
+                            <select class="form-control" name="roles" id="roles" multiple required>
+                                <option value="DA1">DA1</option>
+
+                                <option value="QA">QA</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Super Admin">Super Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                        <button class="btn-sm btn btn-success mt-4" id="samp">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive" style="overflow-y: scroll;max-height: 60vh;height: 60vh;">
+                <table class="table" id="myTable">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Employee ID</th>
+                            <th>Employee Name</th>
+                            <th>Production Start Date</th>
+                            <th>Location</th>
+                            <th>Language</th>
+                            <th>Role</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in userDatas %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ v.employeeID }}</td>
+                            <td>{{ v.employeeName }}</td>
+                            <td>{{ v.prodStart_date }}</td>
+                            <td>{{ v.location }}</td>
+                            <td>{{ v.language }}</td>
+                            <td>{{ v.role }}</td>
+                            <td>
+                                <form  action="{% url 'userTable' %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="key" value="Edit" id="edit" style="display: none;">
+                                    <input type="hidden" name="employeeID" value="{{ v.id }}" id="employeeID" style="display: none;">
+                                    <button class="btn btn-sm btn-info">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                <form  action="{% url 'userTable' %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="key" value="Delete" id="delete" style="display: none;">
+                                    <input type="hidden" name="employeeID" value="{{ v.id }}" id="employeeID" style="display: none;">
+                                    <button class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/jquery_plugin.js' %}"></script>
+
+<script>
+    $("#samp").click(function (event) {
+        event.preventDefault();
+
+        var forms = document.querySelectorAll('#sampfrm');
+        let isEmpty = false;
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+                isEmpty = true;
+            }
+            form.classList.add('was-validated')
+        }, false)
+        if (!isEmpty) {
+
+            $.ajax({
+                url: '/api/v4/OverAllRole/',
+                type: 'POST',
+                data: $('#sampfrm').serialize(),
+                success: function (response) {
+                    if (response['status'] == 200) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: '',
+                            type: 'success',
+                            confirmButtonText: 'Okay'
+                        }).then(function () {
+                            location.reload()
+                        })
+                    }
+                    else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed try again ' + response['message'],
+                            type: 'error',
+                            confirmButtonText: 'Okay'
+                        })
+                    }
+
+                },
+                error: function (response) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response,
+                        type: 'error',
+                        confirmButtonText: 'Okay'
+                    });
+                }
+            })
+        }
+    });
+</script>
+
+<!-- <script>
+    function edit(empid) {
+        formData = {
+            employeeID: empid,
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+        }
+        url = '/api/v4/userTable/'
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            // processData: false, // Prevent jQuery from processing the data
+            // contentType: false, // Prevent jQuery from setting the content type
+            success: function (response) {
+                // $('body').html(response); onclick="edit('{{ v.employeeID }}')"
+            },
+            error: function (xhr, status, error) {
+                // Handle any errors
+                console.error(error);
+            }
+        });
+
+    }
+</script> -->
+{% endblock content %}
+<!-- <script>
+            // var visibleInputs = $("#sampfrm :input:visible");
+        
+        // let isEmpty = false;
+        // visibleInputs.each(function () {
+        //     console.log(this.checkValidity())
+        //     if (!this.checkValidity()) {
+        //         event.stopPropagation();
+        //         isEmpty = true;
+        //     }
+        // });
+        
+        // $("#sampfrm").addClass('was-validated');
+
+</script> -->
