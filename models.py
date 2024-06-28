@@ -71,46 +71,38 @@ class basefile(models.Model):
 class raw_data(models.Model):
     baseid = models.ForeignKey(basefile,null=True,blank=True,on_delete=models.CASCADE)
     
-    id_value = models.CharField(max_length=1255, blank=True, null=True)
+    # id_value = models.CharField(max_length=1255, blank=True, null=True)
     question = models.TextField(blank=True, null=True)
-    asin = models.CharField(max_length=1255, blank=True, null=True)
-    title = models.CharField(max_length=1255, blank=True, null=True)
-    product_url = models.CharField(max_length=1255, blank=True, null=True)
-    imagepath = models.CharField(max_length=1255, blank=True, null=True)
-    evidence = models.TextField(blank=True, null=True)
-    answer_one = models.TextField(blank=True, null=True)
-    answer_two = models.TextField(blank=True, null=True)
+    # asin = models.CharField(max_length=1255, blank=True, null=True)
+    # title = models.CharField(max_length=1255, blank=True, null=True)
+    # product_url = models.CharField(max_length=1255, blank=True, null=True)
+    # imagepath = models.CharField(max_length=1255, blank=True, null=True)
+    # evidence = models.TextField(blank=True, null=True)
+    # answer_one = models.TextField(blank=True, null=True)
+    nile_answer = models.TextField(blank=True, null=True)
+    
+    nile_rq = models.TextField(blank=True, null=True)
     
     # not_picked,picked,completed
     l1_status = models.CharField(
         default='not_picked', max_length=255, blank=True, null=True)
     # not_picked,picked,completed
-    # l2_status = models.CharField(
-    #     default='not_picked', max_length=255, blank=True, null=True)
+
     # not_picked,picked,completed
     l4_status = models.CharField(
         default='not_picked', max_length=255, blank=True, null=True)
 
-    # l3_status = models.CharField(
-    #     default='not_moved', max_length=255, blank=True, null=True)  # moved,not_moved
 
-    # l1_l2_accuracy = models.CharField(max_length=255, blank=True, null=True)
 
     l1_emp = models.ForeignKey(
         userProfile, null=True, blank=True, on_delete=models.RESTRICT, related_name='l1_user_data')
-    # l2_emp = models.ForeignKey(
-    #     userProfile, null=True, blank=True, on_delete=models.RESTRICT, related_name='l2_user_data')
-    # l3_emp = models.ForeignKey(
-    #     userProfile, null=True, blank=True, on_delete=models.RESTRICT, related_name='l3_user_data')
+
     l4_emp = models.ForeignKey(
         userProfile, null=True, blank=True, on_delete=models.RESTRICT, related_name='l4_user_data')
     
     l1_prod = models.ForeignKey(
         'l1_production', null=True, blank=True, on_delete=models.CASCADE, related_name='l1_prodid')
-    # l2_prod = models.ForeignKey(
-    #     'l2_production', null=True, blank=True, on_delete=models.CASCADE, related_name='l2_prodid')
-    # l3_prod = models.ForeignKey(
-    #     'l3_production', null=True, blank=True, on_delete=models.CASCADE, related_name='l3_prodid')
+
     l4_prod = models.ForeignKey(
         'l4_production', null=True, blank=True, on_delete=models.CASCADE, related_name='l4_prodid')
 
@@ -118,7 +110,7 @@ class raw_data(models.Model):
         default='processing', max_length=255, blank=True, null=True)  # onhold ready
 
     l1_loc = models.CharField(max_length=150, blank=True, null=True)
-    # l2_loc = models.CharField(max_length=150, blank=True, null=True)
+
 
     # created_by = models.ForeignKey(
     #     userProfile, null=True, blank=True, on_delete=models.RESTRICT)
@@ -136,28 +128,48 @@ class l1_production(models.Model):
     qid = models.ForeignKey(
         'raw_data', null=True, blank=True, on_delete=models.CASCADE)
     
-    que1  = models.CharField(max_length=855, blank=True, null=True)
-    que2  = models.CharField(max_length=855, blank=True, null=True)
-    que3  = models.CharField(max_length=855, blank=True, null=True)
+    que1 = models.CharField(max_length=855, blank=True, null=True)
+    que2 = models.CharField(max_length=855, blank=True, null=True)
+    que3 = models.CharField(max_length=855, blank=True, null=True)
+    que4 = models.CharField(max_length=855, blank=True, null=True)
 
-    que4a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que5a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que6a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que7a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que8a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que9a_ans1  = models.CharField(max_length=855, blank=True, null=True)
+    que5_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a1_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a2_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a3_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a4_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que7_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que8_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que26_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que27_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a1_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a2_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a3_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a4_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que29_ans1 = models.CharField(max_length=855, blank=True, null=True)
 
-    que4b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que5b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que6b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que7b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que8b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que9b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-
-    que10  = models.CharField(max_length=855, blank=True, null=True)
-    que11  = models.CharField(max_length=855, blank=True, null=True)
-    que12  = models.TextField(blank=True, null=True)
-    que13  = models.TextField(blank=True, null=True)
+    que5_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a1_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a2_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a3_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a4_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que7_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que8_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que26_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que27_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a1_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a2_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a3_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a4_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que29_ans2 = models.CharField(max_length=855, blank=True, null=True)
 
     is_status = models.TextField(blank=True, null=True)
     is_production_status = models.CharField(
@@ -177,120 +189,52 @@ class l1_production(models.Model):
     #     return self.title
 
 
-# class l2_production(models.Model):
-#     qid = models.ForeignKey(
-#         'raw_data', null=True, blank=True, on_delete=models.CASCADE)
-
-#     que1  = models.CharField(max_length=855, blank=True, null=True)
-#     que2  = models.CharField(max_length=855, blank=True, null=True)
-#     que3  = models.CharField(max_length=855, blank=True, null=True)
-
-#     que4a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que5a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que6a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que7a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que8a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que9a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-
-#     que4b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que5b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que6b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que7b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que8b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que9b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-
-#     que10  = models.CharField(max_length=855, blank=True, null=True)
-#     que11  = models.CharField(max_length=855, blank=True, null=True)
-#     que12  = models.TextField(blank=True, null=True)
-#     que13  = models.TextField(blank=True, null=True)
-
-#     is_status = models.TextField(blank=True, null=True)
-#     is_production_status = models.CharField(
-#         max_length=255, blank=True, null=True)
-
-#     start_time = models.DateTimeField(null=True,blank=True)
-#     end_time = models.DateTimeField(null=True,blank=True)
-#     created_by = models.ForeignKey(
-#         userProfile, null=True, blank=True, on_delete=models.CASCADE, related_name='l2_user')
-#     created_at = models.DateTimeField(auto_now_add=True, blank=True)
-
-#     # class Meta:
-#         # unique_together = ('qid', 'created_by')
-
-#     # def __str__(self):
-#     #     return self.title
-
-
-# class l3_production(models.Model):
-#     qid = models.ForeignKey(
-#         'raw_data', null=True, blank=True, on_delete=models.CASCADE)
-    
-#     que1  = models.CharField(max_length=855, blank=True, null=True)
-#     que2  = models.CharField(max_length=855, blank=True, null=True)
-#     que3  = models.CharField(max_length=855, blank=True, null=True)
-
-#     que4a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que5a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que6a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que7a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que8a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-#     que9a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-
-#     que4b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que5b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que6b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que7b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que8b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-#     que9b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-
-#     que10  = models.CharField(max_length=855, blank=True, null=True)
-#     que11  = models.CharField(max_length=855, blank=True, null=True)
-#     que12  = models.TextField(blank=True, null=True)
-#     que13  = models.TextField(blank=True, null=True)
-
-#     is_status = models.TextField(blank=True, null=True)
-#     is_production_status = models.CharField(
-#         max_length=255, blank=True, null=True)
-
-#     start_time = models.DateTimeField(null=True,blank=True)
-#     end_time = models.DateTimeField(null=True,blank=True)
-#     created_by = models.ForeignKey(
-#         userProfile, null=True, blank=True, on_delete=models.CASCADE, related_name='l3_user')
-#     created_at = models.DateTimeField(auto_now_add=True, blank=True)
-
-#     # class Meta:
-#     #     unique_together = ('qid', 'created_by')
-
-#     # def __str__(self):
-#     #     return self.title
-
-
 class l4_production(models.Model):
     qid = models.ForeignKey(
         'raw_data', null=True, blank=True, on_delete=models.CASCADE)
     
-    que1  = models.CharField(max_length=855, blank=True, null=True)
-    que2  = models.CharField(max_length=855, blank=True, null=True)
-    que3  = models.CharField(max_length=855, blank=True, null=True)
+    que1 = models.CharField(max_length=855, blank=True, null=True)
+    que2 = models.CharField(max_length=855, blank=True, null=True)
+    que3 = models.CharField(max_length=855, blank=True, null=True)
+    que4 = models.CharField(max_length=855, blank=True, null=True)
 
-    que4a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que5a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que6a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que7a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que8a_ans1  = models.CharField(max_length=855, blank=True, null=True)
-    que9a_ans1  = models.CharField(max_length=855, blank=True, null=True)
+    que5_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a1_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a2_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a3_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que6a4_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que7_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que8_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que26_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que27_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a1_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a2_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a3_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que28a4_ans1 = models.CharField(max_length=855, blank=True, null=True)
+    que29_ans1 = models.CharField(max_length=855, blank=True, null=True)
 
-    que4b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que5b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que6b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que7b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que8b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-    que9b_ans2  = models.CharField(max_length=855, blank=True, null=True)
-
-    que10  = models.CharField(max_length=855, blank=True, null=True)
-    que11  = models.CharField(max_length=855, blank=True, null=True)
-    que12  = models.TextField(blank=True, null=True)
-    que13  = models.TextField(blank=True, null=True)
+    que5_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a1_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a2_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a3_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que6a4_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que7_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que8_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que26_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que27_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a1_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a2_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a3_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que28a4_ans2 = models.CharField(max_length=855, blank=True, null=True)
+    que29_ans2 = models.CharField(max_length=855, blank=True, null=True)
 
     is_status = models.TextField(blank=True, null=True) # Edited , Not
     is_production_status = models.CharField(
