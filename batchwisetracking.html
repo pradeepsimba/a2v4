@@ -85,6 +85,10 @@
                             <th>Location</th> <!-- v.baseid_id__created_by_id__location -->
                             <th>Input Count</th>
                             <th>DA1 Count</th>
+                            <!-- <th>DA2 Count</th>
+                            <th>QC Queue</th>
+                            <th>QC Count</th>
+                            <th>QA Queue</th> -->
                             <th>QA Count</th>
                         </tr>
                     </thead>
@@ -98,6 +102,10 @@
                             <td>{{ location }}</td>
                             <td>{{v.inputcount}}</td>
                             <td>{{v.da1_count}}</td>
+                            <td>{{v.da2_count}}</td>
+                            <td>{{ v.qc_queue }}</td>
+                            <td>{{v.qc_count}}</td>
+                            <td>{{ v.qa_queue }}</td>
                             <td>{{v.qa_count}}</td>
                         </tr>
                         {% endfor %}
