@@ -34,7 +34,23 @@
         </li>
         {% endif %}
 
+        <!-- {% if 'DA2' in request.session.permlist or 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'productionl2' %}">
+                <i class="bi bi-person-workspace menu-icon"></i>
+                <span class="menu-title">DA2 Production</span>
+            </a>
+        </li>
+        {% endif %}
 
+        {% if 'QC' in request.session.permlist or 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'productionl3' %}">
+                <i class="bi bi-person-workspace menu-icon"></i>
+                <span class="menu-title">QC Production</span>
+            </a>
+        </li>
+        {% endif %} -->
 
         {% if 'QA' in request.session.permlist or 'Admin' in request.session.permlist or 'Super Admin' in request.session.permlist %}
         <li class="nav-item">
