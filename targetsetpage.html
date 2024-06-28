@@ -24,7 +24,8 @@
                                 <option value="">-- Select --</option>
                                 <option value="All">All</option>
                                 <option value="DA1">DA1</option>
-
+                                <!-- <option value="DA2">DA2</option>
+                                <option value="QC">QC</option> -->
                                 <option value="QA">QA</option>
                             </select>
                         </div>
@@ -261,7 +262,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/api/v4/target/",
+                url: "/api/V7e/target/",
                 data: formData,
                 dataType: 'json',
                 success: function (response) {
@@ -333,12 +334,12 @@
 
             $.ajax({
                 type: "POST",
-                url: "/api/v4/save_table_data/",
+                url: "/api/V7e/save_table_data/",
                 data: formData,
                 dataType: 'json',
                 success: function (response) {
                     // alert(response.message);
-                    location.href='/api/v4/target/';
+                    location.href='/api/V7e/target/';
                 },
                 error: function (error) {
                     console.log(error);
