@@ -185,7 +185,7 @@
     }
 
     function filemanagement(key, source) {
-        url = '/api/v4/fileMamagement/';
+        url = '/api/V7e/fileMamagement/';
         if (key == 'delete') {
             Swal.fire({
                 title: 'Info!',
@@ -242,6 +242,8 @@
                 input: 'select',
                 inputOptions: {
                     'DA1': 'DA1',
+                    // 'DA2': 'DA2',
+                    // 'QC': 'QC',
                     'QA': 'QA',
                     'ALL': 'ALL',
                 },
@@ -273,7 +275,7 @@
 
     function download_csv() {
         $.ajax({
-            url: '/api/v4/sample_file_download/',  // URL of the view
+            url: '/api/V7e/sample_file_download/',  // URL of the view
             type: 'GET',
             success: function (data) {
                 // Create a hidden anchor element to trigger the download
