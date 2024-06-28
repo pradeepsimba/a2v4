@@ -392,19 +392,21 @@ def uploadView(request):
 
                         records = []
                         for i in to_dict:
-                            if i.get('id_value', None) is not None:
+                            # there is nothing like id_value in csv file
+                            # if i.get('id_value', None) is not None:
                                 record = raw_data(
-                                    id_value=i.get('id_value', None),
+                                    # id_value=i.get('id_value', None),
                                     question=i.get('question', None),
-                                    asin=i.get('asin', None),
-                                    title=i.get('title', None),
-                                    product_url=i.get('product_url', None),
-                                    imagepath=i.get('imagepath', None),
-                                    evidence=i.get('evidence', None),
-                                    answer_one=i.get('answer_one', None),
-                                    answer_two=i.get('answer_two', None),
+                                    # asin=i.get('asin', None),
+                                    # title=i.get('title', None),
+                                    # product_url=i.get('product_url', None),
+                                    # imagepath=i.get('imagepath', None),
+                                    # evidence=i.get('evidence', None),
+                                    # answer_one=i.get('answer_one', None),
+                                    nile_answer=i.get('nile_answer', None),
                                     nile_rq = i.get('nile_rq', None),
                                     baseid_id=baseid.id
+                                    
                                 )
                                 records.append(record)
                         raw_data.objects.bulk_create(records)
@@ -513,28 +515,16 @@ def fileDownload(request, batchid, filename_form):
     response['Content-Disposition'] = 'attachment; filename="FileDownload"' + \
         batchID+'_'+filename+'".csv"'
 
-    records = raw_data.objects.filter(baseid_id__batch_name=batchID).values("id_value", "baseid_id__batch_name", "baseid_id__created_at", "baseid_id__created_by_id__employeeID",
+    records = raw_data.objects.filter(baseid_id__batch_name=batchID).values( "baseid_id__batch_name", "baseid_id__created_at", "baseid_id__created_by_id__employeeID",
                                                                             "question",
-                                                                            "asin",
-                                                                            "title",
-                                                                            "product_url",
-                                                                            "imagepath",
-                                                                            "evidence",
-                                                                            "answer_one",
-                                                                            "answer_two", "nile_rq","baseid_id__filename")
+                                                                            "nile_answer",
+                                                                            "nile_rq","baseid_id__filename")
     writer = csv.writer(response)
     title = [
         "batchID",
         "File Name",
-        "id_value",
         "question",
-        "asin",
-        "title",
-        "product_url",
-        "imagepath",
-        "evidence",
-        "answer_one",
-        "answer_two",
+        "nile_answer",
         "nile_rq",
         "created_at",
         "created_by"]
@@ -542,16 +532,16 @@ def fileDownload(request, batchid, filename_form):
     for v in records:
         record = [v["baseid_id__batch_name"],
                   v["baseid_id__filename"],
-                  v["id_value"],
+                #   v["id_value"],
                   v["question"],
-                  v["asin"],
-                  v["title"],
-                  v["product_url"],
-                  v["imagepath"],
-                  v["evidence"],
-                  v["answer_one"],
-                  v["answer_two"],
+                  v["nile_answer"],
                   v["nile_rq"],
+                #   v["product_url"],
+                #   v["imagepath"],
+                #   v["evidence"],
+                #   v["answer_one"],
+                #   v["answer_two"],
+                #   v["nile_rq"],
                   v['baseid_id__created_at'],
                   v["baseid_id__created_by_id__employeeID"]]
         writer.writerow(record)
@@ -641,8 +631,7 @@ def SampleFileDownloadView(request):
     response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
     response['Content-Disposition'] = 'attachment; filename="evaluate.csv"'
     csv_writer = csv.writer(response)
-    header = ["id_value", "question", "asin", "title", "product_url",
-              "imagepath", "evidence", "answer_one", "answer_two","nile_rq"]
+    header = ["question", "nile_answer", "nile_rq"]
     csv_writer.writerow(header)
     return response
 
@@ -725,7 +714,7 @@ def loneproductionView(request):
                     query = Q(baseid_id__language__in=language)
 
                 instance = raw_data.objects.select_for_update(skip_locked=True).filter(query,
-                                                                                       (Q(l1_status='picked') & Q(l1_emp_id=EmpID)) | (Q(l1_status='not_picked') & Q(l1_emp_id__isnull=True)) & (Q(l1_loc__isnull=True))).values('id', 'id_value', 'question', 'asin', 'title', 'product_url', 'imagepath', 'evidence', 'answer_one', 'answer_two', 'nile_rq','l1_emp_id').exclude(status__in=['hold', 'deleted']).exclude(l4_emp_id=EmpID).order_by('-l1_status', 'id').first()
+                                                                                       (Q(l1_status='picked') & Q(l1_emp_id=EmpID)) | (Q(l1_status='not_picked') & Q(l1_emp_id__isnull=True)) & (Q(l1_loc__isnull=True))).values('id', 'question','nile_answer','nile_rq', 'l1_emp_id').exclude(status__in=['hold', 'deleted']).exclude(l4_emp_id=EmpID).order_by('-l1_status', 'id').first()
 
                 if instance:
                     l1prod = l1_production.objects
@@ -1123,7 +1112,7 @@ def lfourproductionView(request):
                 if filecount['comp_count'] < queue and int(filecount['cur_count']) >= 0 and int(queue) >= 0:
                     with transaction.atomic():
                         rawData = raw_data.objects.select_for_update(skip_locked=True).filter(Q(l1_status='completed')  & query, (Q(l4_status='not_picked') & Q(l4_emp_id__isnull=True) | Q(l4_status='picked') & Q(l4_emp_id=EmpID)),
-                                                                                                     baseid_id=BaseID).values('id', 'id_value', 'question', 'asin', 'title', 'product_url', 'imagepath', 'evidence', 'answer_one', 'answer_two','nile_rq').exclude(status__in=['hold', 'deleted']).exclude(l1_emp_id=EmpID).order_by('-l4_status').first()
+                                                                                                     baseid_id=BaseID).values('id', 'question','nile_answer','nile_rq').exclude(status__in=['hold', 'deleted']).exclude(l1_emp_id=EmpID).order_by('-l4_status').first()
 
                         if rawData:
                             l4comp = Comparison(rawData['id'])
@@ -1202,7 +1191,7 @@ def outputDownload(request):
                 conditions4 = Q()
 
             if key == 'Download':
-                dL1raw = raw_data.objects.filter(conditions1 & query & query1, l1_status='completed').annotate(timtakn=Sum(F('l1_prod_id__end_time') - F('l1_prod_id__start_time'))).values('id', 'l1_prod_id__end_time__date', 'id_value', 'l1_prod_id', 'l1_emp_id__employeeID', 'question', 'asin', 'product_url', 'title', 'evidence', 'imagepath', 'answer_one', 'answer_two', 'nile_rq','l1_prod_id__start_time', 'l1_prod_id__end_time',
+                dL1raw = raw_data.objects.filter(conditions1 & query & query1, l1_status='completed').annotate(timtakn=Sum(F('l1_prod_id__end_time') - F('l1_prod_id__start_time'))).values('id', 'qid' , 'l1_prod_id__end_time__date',  'l1_prod_id', 'l1_emp_id__employeeID', 'question','nile_answer','nile_rq','l1_prod_id__start_time', 'l1_prod_id__end_time',
                                                                                                                                                                                             'l1_emp_id__employeeName', 'l1_emp_id__location', 'baseid_id__batch_name', 'baseid_id__filename', 'l1_status', 'timtakn',
                                                                                                                                                                                             *l1list[7:]).exclude(status__in=['hold', 'deleted'])
 
@@ -1214,7 +1203,7 @@ def outputDownload(request):
                 #                                                                                                                                                                             'l3_emp_id__employeeName', 'l3_emp_id__location', 'baseid_id__batch_name', 'baseid_id__filename', 'l3_status', 'timtakn',
                 #                                                                                                                                                                             *l3list[7:]).exclude(status__in=['hold', 'deleted'])
 
-                dL4raw = raw_data.objects.filter(conditions4 & query & query1,l4_status='completed').annotate(timtakn=Sum(F('l4_prod_id__end_time') - F('l4_prod_id__start_time'))).values('id', 'l4_prod_id__end_time__date', 'id_value', 'l4_prod_id', 'l4_emp_id__employeeID', 'question', 'asin', 'product_url', 'title', 'evidence', 'imagepath', 'answer_one', 'answer_two','nile_rq', 'l4_prod_id__start_time', 'l4_prod_id__end_time',
+                dL4raw = raw_data.objects.filter(conditions4 & query & query1,l4_status='completed').annotate(timtakn=Sum(F('l4_prod_id__end_time') - F('l4_prod_id__start_time'))).values('id', 'qid' , 'l4_prod_id__end_time__date',  'l4_prod_id', 'l4_emp_id__employeeID', 'question','nile_answer','nile_rq' , 'l4_prod_id__start_time', 'l4_prod_id__end_time',
                                                                                                                                                                                             'l4_emp_id__employeeName', 'l4_emp_id__location', 'baseid_id__batch_name', 'baseid_id__filename', 'l4_status', 'timtakn',
                                                                                                                                                                                             *l4list[7:]).exclude(status__in=['hold', 'deleted'])
 
@@ -1233,15 +1222,16 @@ def outputDownload(request):
                             'DA1',
                             v['baseid_id__batch_name'],
                             v['baseid_id__filename'],
-                            v['id_value'],
-                            v['asin'],
-                            v['product_url'],
-                            v['title'],
-                            v['evidence'],
-                            v['imagepath'],
+                            # v['id_value'],
+                            # v['asin'],
+                            # v['product_url'],
+                            # v['title'],
+                            # v['evidence'],
+                            # v['imagepath'],
                             v['question'],
-                            v['answer_one'],
-                            v['answer_two'],
+
+                            # v['answer_one'],
+                            v['nile_answer'],
                             v['nile_rq'],
                             v['l1_prod_id__que1'],
                             v['l1_prod_id__que2'],
@@ -1436,20 +1426,20 @@ def outputDownload(request):
                     for mv in dL1raw:
                         for v in dL4raw:
                             records = []
-                            if mv['id_value'] == v['id_value'] and v['l4_emp_id__employeeID'] != None and v['l4_prod_id__start_time'] != None and v['l4_prod_id__end_time'] != None:
+                            if mv['qid'] == v['qid'] and v['l4_emp_id__employeeID'] != None and v['l4_prod_id__start_time'] != None and v['l4_prod_id__end_time'] != None:
                                 records.extend([
                                     'QA',
                                     v['baseid_id__batch_name'],
                                     v['baseid_id__filename'],
-                                    v['id_value'],
-                                    v['asin'],
-                                    v['product_url'],
-                                    v['title'],
-                                    v['evidence'],
-                                    v['imagepath'],
+                                    # v['id_value'],
+                                    # v['asin'],
+                                    # v['product_url'],
+                                    # v['title'],
+                                    # v['evidence'],
+                                    # v['imagepath'],
                                     v['question'],
-                                    v['answer_one'],
-                                    v['answer_two'],
+                                    # v['answer_one'],
+                                    v['nile_answer'],
                                     v['nile_rq'],
                                     v['l4_prod_id__que1'],
                                     v['l4_prod_id__que2'],
@@ -1502,20 +1492,20 @@ def outputDownload(request):
                                     v['timtakn'],
                                     v['l4_prod_id__end_time__date']
                                 ])
-                            elif mv['id_value'] == v['id_value']:
+                            elif mv['qid'] == v['qid']:
                                 records.extend([
                                     'QA',
                                     mv['baseid_id__batch_name'],
                                     mv['baseid_id__filename'],
-                                    mv['id_value'],
-                                    mv['asin'],
-                                    mv['product_url'],
-                                    mv['title'],
-                                    mv['evidence'],
-                                    mv['imagepath'],
+                                    # mv['id_value'],
+                                    # mv['asin'],
+                                    # mv['product_url'],
+                                    # mv['title'],
+                                    # mv['evidence'],
+                                    # mv['imagepath'],
                                     mv['question'],
-                                    mv['answer_one'],
-                                    mv['answer_two'],
+                                    # mv['answer_one'],
+                                    mv['nile_answer'],
                                     mv['nile_rq'],
                                     mv['l1_prod_id__que1'],
                                     mv['l1_prod_id__que2'],
@@ -1637,16 +1627,16 @@ def ConsolidateOutput(request):
         l4_sub_condition = Q(conditions4) & Q(l4_status='completed')
 
         fields = [
-            'id_value',
+            # 'id_value',
             'baseid_id__batch_name',
             'baseid_id__filename',
             'question',
-            'asin',
-            'product_url',
-            'imagepath',
-            'evidence',
-            'answer_one',
-            'answer_two',
+            # 'asin',
+            # 'product_url',
+            # 'imagepath',
+            # 'evidence',
+            # 'answer_one',
+            'nile_answer',
             'nile_rq',
         ]
 
@@ -2162,8 +2152,8 @@ def resetuser(request):
             targetusers = raw_data.objects.filter(baseid_id=batch_name, id_value=id_vals).values(
                 'id',
                 'baseid__batch_name',
-                'id_value',
-                'asin',
+                # 'id_value',
+                # 'asin',
                 'l1_emp__employeeID',
                 'l1_status',
                 # 'l2_emp__employeeID',
@@ -2563,10 +2553,10 @@ def ck_report(request):
         query = Q()
         if fromdate and todate:
             query &= Q(l1_prod__end_time__date__range=(fromdate, todate))
-            query &= Q(l2_prod__end_time__date__range=(fromdate, todate))
+            query &= Q(l4_prod__end_time__date__range=(fromdate, todate))
         if not 'All' in location:
             query &= Q(l1_loc=location)
-            query &= Q(l2_loc=location)
+            query &= Q(l4_loc=location)
 
         if not 'All' in baseID:
             query &= Q(baseid_id=baseID)
@@ -2574,47 +2564,47 @@ def ck_report(request):
         if not 'All' in language:
             query &= Q(baseid__language=language)
 
-        datas1 = raw_data.objects.filter(query, l1_status='completed', l2_status='completed').values(
-            'id_value', 'l1_prod_id__que27_ans1', 'l2_prod_id__que27_ans1').exclude(status__in=['hole', 'deleted'])  # ,'baseid__batch_name'
+        datas1 = raw_data.objects.filter(query, l1_status='completed', l4_status='completed').values(
+            'id_value', 'l1_prod_id__que27_ans1', 'l4_prod_id__que27_ans1').exclude(status__in=['hole', 'deleted'])  # ,'baseid__batch_name'
         df_datas1 = pd.DataFrame(datas1)
 
         if not df_datas1.empty:
             df_datas1.replace('', pd.NA, inplace=True)
 
             df_datas1 = df_datas1[df_datas1['l1_prod_id__que27_ans1'].isin(
-                df_datas1['l2_prod_id__que27_ans1'])]
-            df_datas1 = df_datas1[df_datas1['l2_prod_id__que27_ans1'].isin(
+                df_datas1['l4_prod_id__que27_ans1'])]
+            df_datas1 = df_datas1[df_datas1['l4_prod_id__que27_ans1'].isin(
                 df_datas1['l1_prod_id__que27_ans1'])]
 
             # df_datas1 = df_datas1.dropna(
-            #     subset=['l1_prod_id__que27_ans1', 'l2_prod_id__que27_ans1'], how='any')
+            #     subset=['l1_prod_id__que27_ans1', 'l4_prod_id__que27_ans1'], how='any')
 
             # 'baseid__batch_name':'Batch Name',
             df_datas1 = df_datas1.rename(
-                columns={'l1_prod_id__que27_ans1': 'DA1', 'l2_prod_id__que27_ans1': 'DA2'})
+                columns={'l1_prod_id__que27_ans1': 'DA1', 'l4_prod_id__que27_ans1': 'DA2'})
             pivot_table1 = pd.pivot_table(df_datas1, values='id_value', index=[
                 'DA1'], columns='DA2', aggfunc='count', fill_value=0, margins=True, margins_name='Total')  # 'Batch Name',
 
             ck_ans1 = ck_common(pivot_table1)
 
-        datas2 = raw_data.objects.filter(query, l1_status='completed', l2_status='completed').values(
-            'id_value', 'l1_prod_id__que27_ans2', 'l2_prod_id__que27_ans2').exclude(status__in=['hole', 'deleted'])  # ,'baseid__batch_name'
+        datas2 = raw_data.objects.filter(query, l1_status='completed', l4_status='completed').values(
+            'id_value', 'l1_prod_id__que27_ans2', 'l4_prod_id__que27_ans2').exclude(status__in=['hole', 'deleted'])  # ,'baseid__batch_name'
         df_datas2 = pd.DataFrame(datas2)
 
         if not df_datas2.empty:
             df_datas2.replace('', pd.NA, inplace=True)
 
             df_datas2 = df_datas2[df_datas2['l1_prod_id__que27_ans2'].isin(
-                df_datas2['l2_prod_id__que27_ans2'])]
-            df_datas2 = df_datas2[df_datas2['l2_prod_id__que27_ans2'].isin(
+                df_datas2['l4_prod_id__que27_ans2'])]
+            df_datas2 = df_datas2[df_datas2['l4_prod_id__que27_ans2'].isin(
                 df_datas2['l1_prod_id__que27_ans2'])]
 
             # df_datas2 = df_datas2.dropna(
-            #     subset=['l1_prod_id__que27_ans2', 'l2_prod_id__que27_ans2'], how='any')
+            #     subset=['l1_prod_id__que27_ans2', 'l4_prod_id__que27_ans2'], how='any')
 
             # 'baseid__batch_name':'Batch Name',
             df_datas2 = df_datas2.rename(
-                columns={'l1_prod_id__que27_ans2': 'DA1', 'l2_prod_id__que27_ans2': 'DA2'})
+                columns={'l1_prod_id__que27_ans2': 'DA1', 'l4_prod_id__que27_ans2': 'DA2'})
             pivot_table1 = pd.pivot_table(df_datas2, values='id_value', index=[
                 'DA1'], columns='DA2', aggfunc='count', fill_value=0, margins=True, margins_name='Total')  # 'Batch Name',
 
@@ -2685,7 +2675,7 @@ def qualitycommon(key, df_report):
     #     the_audit_count = df_report[questions_to_check_da2].notna().any().sum()
 
     #     for question, (da2_col, da3_col) in comparison_checks.items():
-    #         df_report[question] = df_report[f'l2_{da2_col}'] == df_report[da3_col]
+    #         df_report[question] = df_report[f'l4_{da2_col}'] == df_report[da3_col]
 
     return {'df_report': df_report, 'the_audit_count': the_audit_count}
 
@@ -2736,7 +2726,7 @@ def qualityreport(request):
             raw_data_query &= Q(
                 l1_prod__end_time__date__range=(fromdate, todate))
             raw_data_query &= Q(
-            #     l2_prod__end_time__date__range=(fromdate, todate))
+            #     l4_prod__end_time__date__range=(fromdate, todate))
             # raw_data_query &= Q(
             #     l3_prod__end_time__date__range=(fromdate, todate))
                 l4_prod__end_time__date__range=(fromdate, todate))
@@ -3235,7 +3225,7 @@ def iaa_date_wise(fromdate, todate, batchname_filter):
                                                                              'l4_emp__employeeID',
                                                                              'l1_loc',
                                                                              'l4_emp__employeeName',
-                                                                             'l4_loc',
+                                                                            #  'l4_loc',
                                                                              'id_value',
                                                                              'question',
                                                                              'asin',
@@ -3295,6 +3285,81 @@ def iaa_date_wise(fromdate, todate, batchname_filter):
     
     return melted_percentage_df.drop(index=range(1,18))['value']
 
+def errorreport(request):
+    if request.method == 'POST':
+        fromdate = request.POST.get('fromdate')
+        todate = request.POST.get('todate')
+
+        filterv = Q(end_time__date__range=(fromdate, todate))
+
+        l1_prod = l1_production.objects.filter(filterv) \
+            .values(*list(htmlfields.keys()), 'qid_id','qid__id_value','qid__baseid__batch_name', 'created_by__employeeID')
+
+        l4_prod = l4_production.objects.filter(qid_id__in=l1_prod.values_list('qid_id', flat=True)) \
+            .values(*list(htmlfields.keys()), 'qid_id')
+
+        result_list = []
+        for i in l1_prod:
+            for j in l4_prod:
+                if i['qid_id'] == j['qid_id']:
+                    question_list = []
+                    for field in list(htmlfields.keys()):
+                        print(field, i[field] == j[field], i[field] ,"==", j[field])
+                        comparison_result = 'Matched' if i[field] == j[field] else 'Not Matched'
+                        if comparison_result == 'Not Matched' and field != 'qid_id':
+                            field = list(htmlfields[field].keys())
+                            question_list.extend(field)
+                    result_list.append(
+                        {'EmployeeID' : i['created_by__employeeID'] ,'Id Value': i['qid__id_value'], 'Batch Name': i['qid__baseid__batch_name'], 'Questions': question_list})
+
+        result_df = pd.DataFrame(result_list)
+        result_df.index = np.arange(1, len(result_df) + 1)
+        result_df = result_df.to_html().replace('<table border="1" class="dataframe">', '<table class="table table-hover">') \
+                                    .replace('<thead>', '<thead class="thead-light align-item-center">') \
+                                        .replace('<tr style="text-align: right;">', '<tr>').replace('<th></th>', '<th>S.No</th>')
+
+        return render(request, 'pages/error_report.html', {'result_df': result_df})
+
+    else:
+        EmpID = request.session.get('empId')
+        permlist = Roles.objects.filter(
+                    userprofile_id=EmpID).values_list('role' , flat=True)
+
+        filterv = Q(created_by_id=EmpID, end_time__date = timezone.now().date())
+
+        l1_prod = l1_production.objects.filter(filterv) \
+            .values(*list(htmlfields.keys()))
+
+        l4_prod = l4_production.objects.filter(id__in=l1_prod.values_list('id', flat=True)) \
+            .values(*list(htmlfields.keys()))
+
+        df1 = pd.DataFrame(l1_prod).fillna('null')
+        df4 = pd.DataFrame(l4_prod).fillna('null')
+
+        if not df1.empty and not df4.empty:
+            result_list = []
+            for i in l1_prod.values('qid_id','qid__id_value','qid__baseid__batch_name'):
+                question_list = []
+                for field in list(htmlfields.keys()):
+                    comparison_result = 'Matched' if (
+                        df1[field] == df4[field]).all() else 'Not Matched'
+                    if comparison_result == 'Not Matched' and field != 'qid_id':
+                        field = list(htmlfields[field].keys())
+                        question_list.extend(field)
+                result_list.append(
+                    {'Id Value': i['qid__id_value'], 'Batch Name': i['qid__baseid__batch_name'], 'Questions': question_list})
+
+            result_df = pd.DataFrame(result_list)
+            result_df.index = np.arange(1, len(result_df) + 1)
+            result_df = result_df.to_html().replace('<table border="1" class="dataframe">', '<table class="table table-hover">') \
+                                        .replace('<thead>', '<thead class="thead-light align-item-center">') \
+                                            .replace('<tr style="text-align: right;">', '<tr>').replace('<th></th>', '<th>S.No</th>')
+
+            return render(request, 'pages/error_report.html', {'result_df': result_df})
+        else:
+            return render(request, 'pages/error_report.html', {'result_df': []})
+
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -3313,3 +3378,4 @@ def json_post_view(request):
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
     else:
         return JsonResponse({'status': 'error', 'message': 'Only POST method is allowed'}, status=405)
+
