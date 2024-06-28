@@ -88,7 +88,6 @@
                         <input type="text" name="filename" id="filename" style="display: none;">
                         {% csrf_token %}
                         <button class="btn btn-lg" style="background-color:mediumslateblue;color:white;">
-
                             QA <i class="bi bi-download ml-1"></i>
                         </button>
                     </form>
@@ -98,7 +97,7 @@
             <hr>
             <div class="row text-center p-3">
                 {% if dL1raw and dL4raw %}
-
+                <!-- {% if dL3raw or dL4raw %} -->
                 <div class="col-sm-6 col-md-6">
                     <form class=" mb-2" action="{% url 'ConsolidateOutput' %}" method="POST">
                         <input type="datetime-local" name="fromDate" id="fromDate" style="display: none;">
@@ -112,9 +111,9 @@
                     </form>
                 </div>
                 {% endif %}
-
-                {% if dL1raw and dL4raw %}
-
+                <!-- {% endif %}
+                {% if dL1raw and dL2raw %} -->
+                {% if dL1raw or dL4raw %}
                 <div class="col-sm-6 col-md-6">
                     <form class=" mb-2" action="{% url 'ConsolidateOutput' %}" method="POST">
                         <input type="datetime-local" name="fromDate" id="fromDate" style="display: none;">
@@ -129,7 +128,7 @@
                     </form>
                 </div>
                 {% endif %}
-
+                <!-- {% endif %} -->
             </div>
         </div>
     </div>
