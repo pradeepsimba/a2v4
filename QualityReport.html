@@ -105,7 +105,7 @@
                                 <option value="">-- select --</option>
                                 <option value="ALL">ALL</option>
                                 <option value="DA1">DA1</option>
-                                
+                                <!-- <option value="DA2">DA2</option> -->
                             </select>
                         </div>  
                         
@@ -256,7 +256,7 @@
         // Send AJAX request
         $.ajax({
             type: "POST",
-            url: "/api/v4/qualityreport/",
+            url: "/api/V7e/qualityreport/",
             data: formData,
             // dataType: 'json',
             success: function (response) {
