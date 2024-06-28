@@ -24,7 +24,8 @@
                         <div class="col-sm-12 col-md-8">
                             <select class="form-control" name="roles" id="roles" multiple required>
                                 <option value="DA1">DA1</option>
-
+                                <!-- <option value="DA2">DA2</option>
+                                <option value="QC">QC</option> -->
                                 <option value="QA">QA</option>
                                 <option value="Admin">Admin</option>
                                 <option value="Super Admin">Super Admin</option>
@@ -114,7 +115,7 @@
         if (!isEmpty) {
 
             $.ajax({
-                url: '/api/v4/OverAllRole/',
+                url: '/api/V7e/OverAllRole/',
                 type: 'POST',
                 data: $('#sampfrm').serialize(),
                 success: function (response) {
@@ -157,7 +158,7 @@
             employeeID: empid,
             csrfmiddlewaretoken: '{{ csrf_token }}',
         }
-        url = '/api/v4/userTable/'
+        url = '/api/V7e/userTable/'
         $.ajax({
             url: url,
             type: 'POST',
