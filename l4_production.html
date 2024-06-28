@@ -75,13 +75,6 @@
                                 {{result.answer_two|linebreaks|safe|nan }}
                             </td>
                         </tr>
-                        <tr>
-                            <td id="txtwrap"
-                                style="background-color: #ffcdc9 !important;font-size: medium;line-height: 1.5;">
-                                <b>nile_rq: &nbsp;</b>
-                                {{result.nile_rq|linebreaks|safe|nan }}
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -132,8 +125,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            {% if k == 'que29_ans1' or  k == 'que29_ans2' %}
-                                            <textarea name="{{ k }}" id="{{ k }}"  class="form-control" {% if k != 'que29_ans1' or k != 'que29_ans2' %} required {% endif %}
+                                            {% if k == 'que13' %}
+                                            <textarea name="{{ k }}" id="{{ k }}"  class="form-control" {% if k != 'que13' %} required {% endif %}
                                                 style="border: 1px solid black;color: black;" rows="3"></textarea>
                                             <br>
                                             {% elif k == '' or k == '' %}
@@ -292,6 +285,7 @@
             $('.' + k).hide();
         }
     });
+    
 </script>
 
 <script>
