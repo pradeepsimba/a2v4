@@ -102,6 +102,8 @@
                             <div class="col-sm-12 col-md-8">
                                 <select class="form-control" name="role" id="role" multiple>
                                     <option value="DA1" {% if 'DA1' in roles %} selected{% endif %}>DA1</option>
+                                    <!-- <option value="DA2" {% if 'DA2' in roles %} selected{% endif %}>DA2</option>
+                                    <option value="QC" {% if 'QC' in roles %} selected{% endif %}>QC</option> -->
                                     <option value="QA" {% if 'QA' in roles %} selected{% endif %}>QA</option>
                                     <option value="Admin" {% if 'Admin' in roles %} selected{% endif %}>Admin</option>
                                     {% if 'Super Admin' in request.session.permlist %}
@@ -184,7 +186,7 @@
         event.preventDefault();
         var frm = $('#UserRole');
 
-        var url = '/api/v4/UserManagement/';
+        var url = '/api/V7e/UserManagement/';
 
         var formData = frm.serialize() + '&key=userdata'
         $('.overlay').css('width', '100%');
