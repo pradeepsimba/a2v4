@@ -52,6 +52,8 @@
                                 <th>ID Value</th>
                                 <th>Asin</th>
                                 <th>DA1</th>
+                                <!-- <th>DA2</th>
+                                <th>QC</th> -->
                                 <th>QA</th>
 
                             </tr>
@@ -67,7 +69,14 @@
                                     <br><br>
                                     Status : {{v.l1_status}}
                                 </td>
-
+                                <!-- <td>{{ v.l2_emp__employeeID }}
+                                    <br><br>
+                                    Status : {{v.l2_status}}
+                                </td>
+                                <td>{{ v.l3_emp__employeeID }}
+                                    <br><br>
+                                    Status : {{v.l3_status}}
+                                </td> -->
                                 <td>{{ v.l4_emp__employeeID }}
                                     <br><br>
                                     Status : {{v.l4_status}}
@@ -108,7 +117,8 @@
                                 style="border: 1px solid black; color: black;" required>
                                 <option value="">--Select--</option>
                                 <option value="DA1">DA1</option>
-
+                                <!-- <option value="DA2">DA2</option>
+                                <option value="QC">QC</option> -->
                                 <option value="QA">QA</option>
 
                             </select>
@@ -151,6 +161,8 @@
                             <!-- <th>Batch ID</th> -->
                             <th>ID Value</th>
                             <th>DA1</th>
+                            <!-- <th>DA2</th>
+                            <th>QC</th> -->
                             <th>QA</th>
                             <th>Status</th>
                             <th>
@@ -169,7 +181,14 @@
                                 <br><br>
                                 Status : {{f.l1_status}}
                             </td>
-
+                            <!-- <td>{{ f.l2_emp__employeeID }}
+                                <br><br>
+                                Status : {{f.l2_status}}
+                            </td>
+                            <td>{{ f.l3_emp__employeeID }}
+                                <br><br>
+                                Status : {{f.l3_status}}
+                            </td> -->
                             <td>{{ f.l4_emp__employeeID }}
                                 <br><br>
                                 Status : {{f.l4_status}}
@@ -303,7 +322,7 @@
         // Send Ajax request
         $.ajax({
             type: 'POST',
-            url: '/api/v4/resetuser/',
+            url: '/api/V7e/resetuser/',
             data: formdata,
             dataType: 'json',
             success: function (response) {
