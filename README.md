@@ -6,6 +6,11 @@
 
     git clone -b Trust-Safety https://pradeepsimba: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@github.com/laksys-mnw/a2.git
 
+
+# a2 extention
+
+    git clone https://pradeepsimba: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@github.com/pradeepsimba/a2_extension.git
+
 https://github.com/laksys-mnw/a2/commit/6918ce5d05b376a169d3f96421d1b92a06139a78
     
 https://github.com/laksys-mnw/a2/commit/359723e26fc6f3aaaf5402bc29612b6c79fc0a19
